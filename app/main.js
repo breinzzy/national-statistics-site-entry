@@ -12,10 +12,10 @@
 // so a screenshot script knows when to capture.
 
 import { PROVINCES, YEARS, GDP_GROWTH, INFLATION_DEC, INFLATION_AVG, UNEMPLOYMENT, POVERTY, HDI, POPULATION } from './data.js';
-import { dashboard, population, economy, prices, labour, social, regions, dataPage, missing } from './views.js';
+import { dashboard, population, economy, prices, labour, social, regions, dataPage, missing, provinceMap } from './views.js';
 
 const app = document.getElementById('app');
-const state = { year: 2024, q: '', sort: 'pop' };
+const state = { year: 2024, q: '', sort: 'pop', mapSel: 'WJ', mapMetric: 'pop' };
 
 const ROUTES = {
   '/': { view: dashboard, title: 'Statistik Indonesia — Indonesia in numbers' },
@@ -47,6 +47,17 @@ function bind() {
   const sort = document.getElementById('sort');
   if (sort) sort.addEventListener('change', () => { state.sort = sort.value; render(); });
   app.querySelectorAll('[data-download]').forEach((b) => b.addEventListener('click', () => download(b.dataset.download)));
+  bindMap();
+}
+
+// The province tile map updates in place (no full re-render, so the page
+// does not scroll back to the top when a tile is tapped).
+function bindMap() {
+  const box = document.getElementById('provincemap');
+  if (!box) return;
+  const redraw = () => { box.innerHTML = provinceMap(state.mapSel, state.mapMetric); bindMap(); };
+  box.querySelectorAll('[data-code]').forEach((b) => b.addEventListener('click', () => { state.mapSel = b.dataset.code; redraw(); }));
+  box.querySelectorAll('[data-metric]').forEach((b) => b.addEventListener('click', () => { state.mapMetric = b.dataset.metric; redraw(); }));
 }
 
 function download(kind) {
