@@ -111,12 +111,17 @@ footer strong { color: #fff; }
 .kpis.side .kpi-value { font-size: 27px; }
 .kpis.side .kpi { display: flex; flex-direction: column; justify-content: center; }
 
+/* KPI sparklines: 2015-2024 trend on every headline card */
+.spark { display: block; width: 100%; height: 24px; margin: 5px 0 1px; }
+/* Decade-of-change line at the foot of the map card */
+.map-decade { font-size: 12.5px; color: var(--navy); margin: 6px 0 0; padding-top: 6px; border-top: 1px solid var(--line); }
+
 /* Source stamps: every figure carries its source + year */
 .stamp { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--navy); border: 1.5px solid var(--navy); border-radius: 6px; padding: 1px 6px; background: #fff; white-space: nowrap; }
 .stamp.big { font-size: 12px; padding: 3px 8px; }
 .kpi-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .kpi-top .kpi-label { flex: 1; min-width: 0; }
-.card-head:has(.card-titles) { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.card-head:has(.card-titles) { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .card-head .card-titles { flex: 1; min-width: 0; }
 .card-head .stamp { margin-top: 2px; }
 
@@ -130,8 +135,11 @@ footer strong { color: #fff; }
 .map-card { margin: 0 0 14px; }
 .map-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 10px; }
 .map-note { font-size: 12.5px; color: var(--muted); }
-.tilemap { display: grid; grid-template-columns: repeat(16, 1fr); grid-auto-rows: 28px; gap: 3px; }
-.tile { border: 0; border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0; line-height: 1; font-family: inherit; }
+.tilemap { display: grid; grid-template-columns: repeat(16, 1fr); grid-auto-rows: 24px; gap: 3px; }
+.tile { border: 0; border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0; line-height: 1; font-family: inherit; min-width: 0; overflow: hidden; }
+/* Grid items must be allowed to shrink below content width, or the 16-col
+   tile map forces the card wider than a phone viewport (min-content blowout). */
+.grid-map > * { min-width: 0; }
 .tile:hover { outline: 2px solid var(--navy); outline-offset: 1px; }
 .tile.sel { outline: 3px solid var(--red); outline-offset: 1px; }
 .map-legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 0; font-size: 12.5px; color: var(--muted); align-items: center; }
