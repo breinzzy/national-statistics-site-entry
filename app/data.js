@@ -6,7 +6,7 @@
 
 export const META = {
   country: 'Indonesia',
-  updated: '26 November 2026',
+  updated: '28 November 2026',
   sourceNote: 'Sources: BPS — Statistics Indonesia; Bank Indonesia. Figures rounded; totals may not sum due to rounding.',
 };
 
@@ -23,8 +23,10 @@ export const KPI = [
 // 6 headline KPIs + 70 annual-series points (7 series x 10 years) + 15 GDP-by-year
 // cells + 13 sector shares + 12 island-group figures + 15 trade cells + 8
 // employment shares + 32 pyramid cells + 76 province figures (38 x pop + share)
-// + 6 dated releases = 253.
-export const FIGURE_COUNT = 253;
+// + 6 dated releases + 5 GDP nominal 2015–2019 + 5 GDP per capita 2015–2019
+// + 10 exchange-rate points 2015–2024 = 273. (Density and the decade deltas are
+// computed from counted points, so they add nothing.)
+export const FIGURE_COUNT = 273;
 
 // Annual series, 2015-2024
 export const YEARS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
@@ -43,6 +45,19 @@ export const GDP_BY_YEAR = {
   2023: { gdp: 20892, growth: 5.05, perCapita: 74985 },
   2024: { gdp: 22139, growth: 5.03, perCapita: 78616 },
 };
+
+// GDP at current prices, Rp trillion (BPS national accounts).
+export const GDP_NOMINAL = [11526, 12407, 13587, 14839, 15833, 15434, 16976, 19588, 20892, 22139];
+// GDP per capita, Rp million. 2020–2024 are the BPS published figures; 2015–2019
+// are GDP ÷ population from the two published series above.
+export const GDP_PER_CAPITA = [45.1, 48.0, 51.9, 56.0, 59.1, 57.9, 62.5, 71.0, 75.0, 78.6];
+// Rupiah per US dollar at year end (Bank Indonesia middle rate).
+export const EXCHANGE_RATE = [13795, 13436, 13548, 14481, 13901, 14105, 14269, 15731, 15397, 16162];
+// Population density, people per km² of land (land area 1,904,569 km², BPS;
+// computed from the population series, so it adds no new counted figures).
+export const DENSITY = [134.2, 135.8, 137.5, 139.1, 140.8, 141.9, 143.2, 144.8, 146.3, 147.9];
+
+// (INDICATORS lives at the end of this file, after TRADE — it reads TRADE.)
 
 export const SECTORS = [
   { name: 'Manufacturing', share: 18.9 },
@@ -152,14 +167,14 @@ export const PROVINCES = [
   { name: 'South Papua', pop: 0.5, island: 'Maluku & Papua', code: 'SP', map: [14, 4] },
 ];
 
-// Tile-map colour bins by provincial population (millions). The same bins serve
-// the share view, since share is population / 281.6m.
+// Tile-map colour bins by provincial population (millions). Forest-green scale
+// for the v4 editorial design.
 export const MAP_BINS = [
-  { min: 40, color: '#0a2540', dark: true, label: '40m+' },
-  { min: 10, color: '#0b5fff', dark: true, label: '10–40m' },
-  { min: 5, color: '#6ea8ff', dark: false, label: '5–10m' },
-  { min: 2, color: '#b9d2ff', dark: false, label: '2–5m' },
-  { min: 0, color: '#e3ecff', dark: false, label: 'Under 2m' },
+  { min: 40, color: '#0d3b2e', dark: true, label: '40m+' },
+  { min: 10, color: '#1d6b4a', dark: true, label: '10–40m' },
+  { min: 5, color: '#5aa469', dark: false, label: '5–10m' },
+  { min: 2, color: '#a8d5a2', dark: false, label: '2–5m' },
+  { min: 0, color: '#e3efe6', dark: false, label: 'Under 2m' },
 ];
 
 export const RELEASES = [
@@ -177,4 +192,23 @@ export const FINDINGS = [
   'Inflation fell to 1.57% in December 2024, its lowest year-end reading in the decade.',
   'Poverty has fallen every year since 2021, to 8.47% in March 2025 — the lowest on record.',
   'The working-age population (15–64) is about 69% of the total, the core of the demographic dividend.',
+];
+
+// The indicator browser: every annual series on the site, one row each.
+// years/values line up; 2020–2024 series (trade) carry their own year labels.
+export const INDICATORS = [
+  { id: 'population', label: 'Population', unit: 'million people', years: YEARS, values: POPULATION, dec: 1, suffix: 'm', src: 'BPS 2024', blurb: 'Mid-year estimate; the world’s fourth-largest population.' },
+  { id: 'gdp-growth', label: 'GDP growth', unit: '% per year, constant prices', years: YEARS, values: GDP_GROWTH, dec: 2, suffix: '%', src: 'BPS 2024', blurb: 'Real growth; the 2020 contraction and the recovery since.' },
+  { id: 'gdp-nominal', label: 'GDP, current prices', unit: 'Rp trillion', years: YEARS, values: GDP_NOMINAL, dec: 0, prefix: 'Rp', src: 'BPS 2024', blurb: 'Nominal GDP nearly doubled since 2015.' },
+  { id: 'gdp-per-capita', label: 'GDP per capita', unit: 'Rp million', years: YEARS, values: GDP_PER_CAPITA, dec: 1, prefix: 'Rp', src: 'BPS 2024', blurb: 'Output per person; dipped in 2020, then rose every year.' },
+  { id: 'inflation-dec', label: 'Inflation, December', unit: '% year on year', years: YEARS, values: INFLATION_DEC, dec: 2, suffix: '%', src: 'BPS 2024', blurb: 'Year-end CPI; 1.57% in 2024 is the decade’s lowest.' },
+  { id: 'inflation-avg', label: 'Inflation, annual average', unit: '%', years: YEARS, values: INFLATION_AVG, dec: 2, suffix: '%', src: 'BPS 2024', blurb: 'Average CPI; the 2022 spike to 4.21% stands out.' },
+  { id: 'unemployment', label: 'Unemployment rate', unit: '% of labour force, August', years: YEARS, values: UNEMPLOYMENT, dec: 2, suffix: '%', src: 'BPS 2024', blurb: 'Open unemployment; 7.07% in 2020, 4.91% in 2024.' },
+  { id: 'poverty', label: 'Poverty rate', unit: '% of population, March', years: YEARS, values: POVERTY, dec: 2, suffix: '%', src: 'BPS 2025', blurb: 'Falling every year since 2021, to 8.47% in March 2025.' },
+  { id: 'hdi', label: 'Human Development Index', unit: 'index, 0–100', years: YEARS, values: HDI, dec: 2, suffix: '', src: 'BPS 2024', blurb: 'Health, education and income; 75.02, high category.' },
+  { id: 'exports', label: 'Exports', unit: 'US$ billion', years: [2020, 2021, 2022, 2023, 2024], values: TRADE.map((t) => t.exports), dec: 2, prefix: 'US$', src: 'BPS 2024', blurb: 'Goods exports; peaked at US$291.98bn in 2022.' },
+  { id: 'imports', label: 'Imports', unit: 'US$ billion', years: [2020, 2021, 2022, 2023, 2024], values: TRADE.map((t) => t.imports), dec: 2, prefix: 'US$', src: 'BPS 2024', blurb: 'Goods imports; US$233.66bn in 2024.' },
+  { id: 'balance', label: 'Trade balance', unit: 'US$ billion', years: [2020, 2021, 2022, 2023, 2024], values: TRADE.map((t) => t.balance), dec: 2, prefix: 'US$', src: 'BPS 2024', blurb: 'Surplus every year since 2020; US$31.04bn in 2024.' },
+  { id: 'exchange', label: 'Exchange rate', unit: 'Rp per US$, year end', years: YEARS, values: EXCHANGE_RATE, dec: 0, prefix: 'Rp', src: 'Bank Indonesia 2024', blurb: 'Rupiah per dollar; Rp16,162 at end-2024.' },
+  { id: 'density', label: 'Population density', unit: 'people per km² of land', years: YEARS, values: DENSITY, dec: 1, suffix: '', src: 'BPS 2024', blurb: 'People per square kilometre; 147.9 in 2024.' },
 ];
