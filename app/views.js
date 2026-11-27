@@ -9,7 +9,7 @@ import {
 } from './data.js';
 import { lineChart, hbars, vbars, pyramid } from './charts.js';
 
-const esc = (s) => String(s).replace(/[&<>"/g, (c) => `&#${c.charCodeAt(0)};`);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
 const fmt = (n) => n.toLocaleString('en-US');
 
 // Sparkline for a KPI card: the indicator's 2015-2024 annual series as a
