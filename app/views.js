@@ -9,11 +9,31 @@ import {
 } from './data.js';
 import { lineChart, hbars, vbars, pyramid } from './charts.js';
 
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+const esc = (s) => String(s).replace(/[&<>"/g, (c) => `&#${c.charCodeAt(0)};`);
 const fmt = (n) => n.toLocaleString('en-US');
 
+// Sparkline for a KPI card: the indicator's 2015-2024 annual series as a
+// small line, so the trend is visible on the card itself.
+const SPARKS = { 'Population': POPULATION, 'GDP growth': GDP_GROWTH, 'Inflation': INFLATION_DEC, 'Unemployment': UNEMPLOYMENT, 'Poverty rate': POVERTY, 'Human Development Index': HDI };
+function sparkline(values) {
+  const min = Math.min(...values), max = Math.max(...values), span = (max - min) || 1;
+  const pts = values.map((v, i) => `${((i / (values.length - 1)) * 100).toFixed(1)},${((1 - (v - min) / span) * 24 + 2).toFixed(1)}`).join(' ');
+  const lx = 100, ly = (1 - (values[values.length - 1] - min) / span) * 24 + 2;
+  return `<svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="#0b5fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx}" cy="${ly.toFixed(1)}" r="2.6" fill="#0b5fff"/></svg>`;
+}
+
+// A decade of change, computed from the site's own 2015-2024 series (not new
+// figures — the deltas reuse points already counted in FIGURE_COUNT).
+function decadeLine() {
+  const popD = POPULATION[9] - POPULATION[0];
+  const povD = POVERTY[9] - POVERTY[0];
+  const avgG = GDP_GROWTH.reduce((a, b) => a + b, 0) / GDP_GROWTH.length;
+  const unD = UNEMPLOYMENT[9] - UNEMPLOYMENT[0];
+  return `Since 2015: +${popD.toFixed(1)}m people · poverty ${povD.toFixed(2)} pts · growth ${avgG.toFixed(1)}% a year · unemployment ${unD.toFixed(2)} pts`;
+}
+
 function kpiCards(side = false) {
-  return `<section class="kpis${side ? ' side' : ''}">${KPI.map((k) => `<a class="kpi" href="${k.href}"><span class="kpi-top"><span class="kpi-label">${esc(k.label)}</span><span class="stamp">${esc(k.src)}</span></span><span class="kpi-value">${esc(k.value)}</span><span class="kpi-sub">${esc(k.sub)}</span><span class="kpi-change">${esc(k.change)}</span></a>`).join('')}</section>`;
+  return `<section class="kpis${side ? ' side' : ''}">${KPI.map((k) => `<a class="kpi" href="${k.href}"><span class="kpi-top"><span class="kpi-label">${esc(k.label)}</span><span class="stamp">${esc(k.src)}</span></span><span class="kpi-value">${esc(k.value)}</span><span class="kpi-sub">${esc(k.sub)}</span>${SPARKS[k.label] ? sparkline(SPARKS[k.label]) : ''}<span class="kpi-change">${esc(k.change)}</span></a>`).join('')}</section>`;
 }
 
 // stamp: the source + year badge every figure carries, e.g. "BPS 2024".
@@ -58,11 +78,11 @@ export function dashboard() {
   return `
   <section class="hero"><p class="eyebrow">Official statistics · Indonesia</p>
   <h1>Indonesia in numbers</h1>
-  <p class="lede">281.6 million people, 38 provinces, one economy growing at 5% a year. Explore the figures behind the country — population, economy, prices, jobs and living standards — all from published official data.</p>
+  <p class="lede">281.6 million people, 38 provinces — every figure stamped with its source and year.</p>
   <p class="hero-links"><a class="btn" href="#/economy">Explore the economy →</a><a class="btn ghost" href="#/data">Download the data</a></p></section>
   <section class="proof"><div><strong>38</strong><span>provinces, one map</span></div><div><strong>${FIGURE_COUNT}</strong><span>figures, all stamped</span></div><div><strong>2</strong><span>publishers, read 26 Nov 2026</span></div><div><strong>10 yrs</strong><span>series, 2015–2024</span></div></section>
   <div class="grid-map">
-  <section class="card map-card"><header class="card-head"><div class="card-titles"><h2>Indonesia by province, 2024</h2><p>Population by province, millions · tap a tile for the detail</p></div><span class="stamp big">BPS 2024</span></header><div id="provincemap">${provinceMap('WJ', 'pop')}</div></section>
+  <section class="card map-card"><header class="card-head"><div class="card-titles"><h2>Indonesia by province, 2024</h2><p>Population by province, millions · tap a tile for the detail</p></div><span class="stamp big">BPS 2024</span></header><div id="provincemap">${provinceMap('WJ', 'pop')}</div><p class="map-decade">${decadeLine()}</p></section>
   ${kpiCards(true)}
   </div>
   <div class="grid2">
@@ -177,7 +197,7 @@ export function dataPage() {
   ${card('Release calendar', 'The next scheduled releases', `<ul class="releases">${RELEASES.map((r) => `<li><span class="rel-date">${esc(r.date)}</span><strong>${esc(r.title)}</strong><span>${esc(r.detail)}</span></li>`).join('')}</ul>`)}
   </div>
   ${card('Methodology', 'How the figures are made', `<ul class="findings"><li><strong>Population:</strong> 2020 Population Census, updated with intercensal projections; provincial figures are mid-year estimates.</li><li><strong>GDP:</strong> national accounts at current and constant 2010 prices; growth is year on year in constant prices.</li><li><strong>Inflation:</strong> Consumer Price Index, base year 2022 = 100, surveyed monthly in 90 cities.</li><li><strong>Labour:</strong> National Labour Force Survey (Sakernas), held twice a year; unemployment is the open rate.</li><li><strong>Poverty:</strong> National Socio-Economic Survey (Susenas), March and September; the line is the cost of a minimum food and non-food basket.</li><li><strong>HDI:</strong> composite of life expectancy, expected and mean years of schooling, and adjusted per-capita expenditure.</li></ul>`)}
-  ${card('Sources &amp; citation', 'Where every number comes from', `<p>BPS — Statistics Indonesia (bps.go.id): population, GDP, CPI, Sakernas, Susenas, HDI. Bank Indonesia (bi.go.id): exchange rate and trade. Cite as: “Statistik Indonesia, figures from BPS — Statistics Indonesia, accessed November 2026.”</p><p class="fine">This site is an original presentation of published official statistics. It is not affiliated with BPS or the Government of Indonesia.</p>`)}
+  ${card('Sources &amp; citation', 'Where every number comes from', `<table class="tbl"><thead><tr><th>Indicator</th><th>Publication</th><th>Year</th></tr></thead><tbody><tr><td>Population</td><td>BPS, Intercensal Population Projection</td><td>2024</td></tr><tr><td>GDP &amp; growth</td><td>BPS, National Accounts (GDP)</td><td>2024</td></tr><tr><td>Inflation</td><td>BPS, Consumer Price Index</td><td>2024</td></tr><tr><td>Unemployment</td><td>BPS, Labour Force Survey (Sakernas)</td><td>Feb 2025</td></tr><tr><td>Poverty</td><td>BPS, Socio-Economic Survey (Susenas)</td><td>Mar 2025</td></tr><tr><td>HDI &amp; life expectancy</td><td>BPS, Human Development Index</td><td>2024</td></tr><tr><td>Trade &amp; exchange rate</td><td>Bank Indonesia / BPS trade statistics</td><td>2024</td></tr></tbody></table><p>BPS — Statistics Indonesia (bps.go.id): population, GDP, CPI, Sakernas, Susenas, HDI. Bank Indonesia (bi.go.id): exchange rate and trade. Cite as: “Statistik Indonesia, figures from BPS — Statistics Indonesia, accessed November 2026.”</p><p class="fine">This site is an original presentation of published official statistics. It is not affiliated with BPS or the Government of Indonesia.</p>`)}
   <p class="src">${esc(META.sourceNote)}</p>`;
 }
 
