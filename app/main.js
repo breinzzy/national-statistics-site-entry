@@ -17,7 +17,7 @@ import { PROVINCES, YEARS, GDP_GROWTH, INFLATION_DEC, INFLATION_AVG, UNEMPLOYMEN
 import { dashboard, population, economy, prices, labour, social, regions, duel, indicators, dataPage, missing, provinceMap } from './views.js';
 
 const app = document.getElementById('app');
-const state = { year: 2024, q: '', sort: 'pop', mapSel: 'WJ', mapMetric: 'pop', duelA: 'WJ', duelB: 'EJ', indQ: '', indFilter: 'all', indSort: 'change', indSel: 'population', popYear: 2024 };
+const state = { year: 2025, q: '', sort: 'pop', mapSel: 'WJ', mapMetric: 'pop', duelA: 'WJ', duelB: 'EJ', indQ: '', indFilter: 'all', indSort: 'change', indSel: 'population', popYear: 2025 };
 
 const ROUTES = {
   '/': { view: dashboard, title: 'Statistik Indonesia — Indonesia in numbers' },
@@ -97,8 +97,8 @@ function download(kind) {
     csv = 'Province,Island group,Population (millions),Share of national (%)\n' +
       PROVINCES.map((p) => `${p.name},${p.island},${p.pop.toFixed(1)},${((p.pop / 281.6) * 100).toFixed(1)}`).join('\n');
   } else {
-    name = 'indonesia-annual-indicators-2015-2024.csv';
-    const rows = YEARS.map((y, i) => [y, GDP_GROWTH[i], INFLATION_DEC[i], INFLATION_AVG[i], UNEMPLOYMENT[i], POVERTY[i], HDI[i], POPULATION[i]].join(','));
+    name = 'indonesia-annual-indicators-2015-2025.csv';
+    const rows = YEARS.map((y, i) => [y, GDP_GROWTH[i], INFLATION_DEC[i], INFLATION_AVG[i] ?? '', UNEMPLOYMENT[i], POVERTY[i], HDI[i], POPULATION[i]].join(','));
     csv = 'Year,GDP growth (%),Inflation Dec yoy (%),Inflation annual avg (%),Unemployment (%),Poverty (%),HDI,Population (millions)\n' + rows.join('\n');
   }
   const a = document.createElement('a');

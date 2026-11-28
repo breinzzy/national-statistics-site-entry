@@ -37,7 +37,7 @@ nav a:hover { color: #fff; background: rgba(255, 255, 255, .12); }
 nav a.on { color: #fff; background: var(--terra); }
 
 /* Hero band (dark green editorial masthead) */
-.hero-band { background: var(--green); color: #f6f1e7; border-radius: 0 0 18px 18px; padding: 18px 28px 16px; margin: 0 0 12px; }
+.hero-band { background: var(--green); color: #f6f1e7; border-radius: 0 0 18px 18px; padding: 14px 28px 12px; margin: 0 0 12px; }
 .hero-band .eyebrow { color: #e8b04b; }
 .hero-band h1 { font-family: var(--serif); font-size: 40px; line-height: 1.05; margin: 0 0 8px; color: #fff; letter-spacing: -.01em; font-weight: 700; }
 .hero-band h1 em { color: #e8b04b; font-style: normal; }
@@ -120,8 +120,11 @@ footer strong { color: #fff; }
 .grid-map { display: grid; grid-template-columns: 7fr 5fr; gap: 14px; margin: 0 0 14px; align-items: stretch; }
 .grid-map .map-card { margin: 0; }
 .kpis.side { grid-template-columns: repeat(2, 1fr); margin: 0; }
-.kpis.side .kpi-value { font-size: 25px; }
-.kpis.side .kpi { display: flex; flex-direction: column; justify-content: center; }
+.kpis.side .kpi-value { font-size: 23px; }
+.kpis.side .kpi { display: flex; flex-direction: column; justify-content: center; padding: 9px 14px 8px; }
+/* Eight KPI cards share the dashboard's side column: hide their sparklines
+   there (the trend is in the charts below) so all eight fit the cover. */
+.kpis.side .spark { display: none; }
 
 /* KPI sparklines */
 .spark { display: block; width: 100%; height: 24px; margin: 5px 0 1px; }
@@ -147,7 +150,7 @@ footer strong { color: #fff; }
 .map-card { margin: 0 0 14px; }
 .map-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 10px; }
 .map-note { font-size: 12.5px; color: var(--muted); }
-.tilemap { display: grid; grid-template-columns: repeat(16, 1fr); grid-auto-rows: 24px; gap: 3px; }
+.tilemap { display: grid; grid-template-columns: repeat(16, 1fr); grid-auto-rows: 22px; gap: 2px; }
 .tile { border: 0; border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0; line-height: 1; font-family: inherit; min-width: 0; overflow: hidden; }
 .grid-map > * { min-width: 0; }
 .tile:hover { outline: 2px solid var(--green); outline-offset: 1px; }
