@@ -28,7 +28,7 @@ export function lineChart({ labels, series, height = 220, yLabel = '', color = '
 }
 
 export function hbars({ rows, height = null, color = '#1d6b4a', suffix = '', max = null }) {
-  const W = 640, rowH = 30, P = { l: 168, r: 52, t: 6, b: 6 };
+  const W = 640, rowH = 30, P = { l: 168, r: 68, t: 6, b: 6 };
   const H = height ?? P.t + P.b + rows.length * rowH;
   const hi = max ?? Math.max(...rows.map((r) => r.value));
   const parts = rows.map((r, i) => {
@@ -69,5 +69,5 @@ export function pyramid({ rows }) {
 
 function fmtNum(v) {
   const n = Math.round(v * 100) / 100;
-  return Number.isInteger(n) ? String(n) : n.toFixed(n < 10 ? 2 : 1).replace(/\.?0+$/, '');
+  return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, '');
 }
