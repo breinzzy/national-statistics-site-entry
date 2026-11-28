@@ -13,7 +13,7 @@
 // window.__shotReady is false while a page renders and true once it is on screen,
 // so a screenshot script knows when to capture.
 
-import { PROVINCES, YEARS, GDP_GROWTH, INFLATION_DEC, INFLATION_AVG, UNEMPLOYMENT, POVERTY, HDI, POPULATION } from './data.js';
+import { PROVINCES, PROV_TOTAL, YEARS, GDP_GROWTH, INFLATION_DEC, INFLATION_AVG, UNEMPLOYMENT, POVERTY, HDI, POPULATION } from './data.js';
 import { dashboard, population, economy, prices, labour, social, regions, duel, indicators, dataPage, missing, provinceMap } from './views.js';
 
 const app = document.getElementById('app');
@@ -95,7 +95,7 @@ function download(kind) {
   if (kind === 'provinces') {
     name = 'indonesia-provinces-2024.csv';
     csv = 'Province,Island group,Population (millions),Share of national (%)\n' +
-      PROVINCES.map((p) => `${p.name},${p.island},${p.pop.toFixed(1)},${((p.pop / 281.6) * 100).toFixed(1)}`).join('\n');
+      PROVINCES.map((p) => `${p.name},${p.island},${p.pop.toFixed(1)},${((p.pop / PROV_TOTAL) * 100).toFixed(1)}`).join('\n');
   } else {
     name = 'indonesia-annual-indicators-2015-2025.csv';
     const rows = YEARS.map((y, i) => [y, GDP_GROWTH[i], INFLATION_DEC[i], INFLATION_AVG[i] ?? '', UNEMPLOYMENT[i], POVERTY[i], HDI[i], POPULATION[i]].join(','));
